@@ -1,0 +1,7 @@
+{
+  "name": "agenttrust-deploy",
+  "private": true,
+  "type": "module",
+  "description": "Deployment helper for AgentTrust. Not exercised by the offline test suite.",
+  "dependencies": { "genlayer-js": "1.1.8" }
+}
