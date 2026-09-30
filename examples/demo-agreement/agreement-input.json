@@ -1,1 +1,43 @@
-
+{
+  "amount": "10000000000000000000",
+  "currency": "GEN",
+  "description": "A REST API with token authentication, user creation and lookup, rate limiting and a documented user schema.",
+  "dispute_policy": "JURY",
+  "evidence_policy": "STRICT",
+  "requirements": [
+    {
+      "description": "Authentication is required on every endpoint.",
+      "evidence_requirements": "Source showing an authentication check applied to the endpoints.",
+      "id": "REQ-001",
+      "method": "CODE_INSPECTION"
+    },
+    {
+      "description": "POST /users creates a user and returns 201.",
+      "evidence_requirements": "Source of the POST /users handler.",
+      "id": "REQ-002",
+      "method": "CODE_INSPECTION"
+    },
+    {
+      "description": "GET /users/{id} returns the user or 404.",
+      "evidence_requirements": "Source of the GET /users/{id} handler.",
+      "id": "REQ-003",
+      "method": "CODE_INSPECTION"
+    },
+    {
+      "description": "Rate limiting is implemented.",
+      "evidence_requirements": "Source showing a rate limiter configured for the API.",
+      "id": "REQ-004",
+      "method": "CODE_INSPECTION"
+    },
+    {
+      "description": "API returns the specified JSON schema for users.",
+      "evidence_requirements": "A schema file or handler output showing id, name and email fields.",
+      "id": "REQ-005",
+      "method": "SCHEMA_CHECK"
+    }
+  ],
+  "specification": "Deliver a Flask service exposing POST /users and GET /users/{id} behind token authentication, with rate limiting and the published user JSON schema.",
+  "title": "REST API for the acme user service",
+  "verification_policy": "ADVERSARIAL",
+  "worker": "0x00000000000000000000000000000000000000c2"
+}

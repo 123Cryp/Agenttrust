@@ -1,0 +1,20 @@
+[
+  {
+    "commit": "2222222222222222222222222222222222222222",
+    "kind": "github_file",
+    "path": "src/app.py",
+    "repository": "https://github.com/acme-agent/user-api"
+  },
+  {
+    "commit": "2222222222222222222222222222222222222222",
+    "kind": "github_file",
+    "path": "src/auth.py",
+    "repository": "https://github.com/acme-agent/user-api"
+  },
+  {
+    "commit": "2222222222222222222222222222222222222222",
+    "kind": "github_file",
+    "path": "docs/schema.json",
+    "repository": "https://github.com/acme-agent/user-api"
+  }
+]

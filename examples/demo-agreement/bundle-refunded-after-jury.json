@@ -1,0 +1,46 @@
+{
+  "challenges": [
+    {
+      "challenge_hash": "fb890987d96bbd54e0ebc715de97cef56309bb7b80c3a5bd2eb77ae61f8309cc",
+      "challenge_id": "CH-1",
+      "challenger": "0x00000000000000000000000000000000000000c2",
+      "claim": "The limiter may be configured elsewhere in the application.",
+      "created_at": 1800345662,
+      "evidence_id": "E1",
+      "original_status": "FAIL",
+      "quote": "app = Flask(__name__)",
+      "reasoning": "The worker asks the auditor to look again but cites only the application factory line, which shows no limiter.",
+      "requirement_id": "REQ-004",
+      "resolution": {
+        "detail": "",
+        "new_verdict": "",
+        "quotes": [],
+        "reason": "scripted",
+        "ruling": "REJECTED"
+      },
+      "resolved_status": "FAIL",
+      "side": "WORKER",
+      "status": "REJECTED"
+    }
+  ],
+  "evidence": [
+    {
+      "content": "from flask import Flask, request, jsonify\nfrom auth import require_token\n\napp = Flask(__name__)\nUSERS = {}\n\n\n@app.route(\"/users\", methods=[\"POST\"])\n@require_token\ndef create_user():\n    data = request.get_json()\n    user = {\"id\": len(USERS) + 1, \"name\": data[\"name\"], \"email\": data[\"email\"]}\n    USERS[user[\"id\"]] = user\n    return jsonify(user), 201\n\n\n@app.route(\"/users/<int:user_id>\", methods=[\"GET\"])\n@require_token\ndef get_user(user_id):\n    user = USERS.get(user_id)\n    if user is None:\n        return jsonify({\"error\": \"not found\"}), 404\n    return jsonify(user), 200\n",
+      "content_hash": "b937b874bb466456fbb177223f17e8497955013bdc8ccc34f521d0bfa0b93bbb",
+      "item_id": "E1",
+      "kind": "github_file",
+      "length": 576,
+      "mutable": 0,
+      "source": "github:acme-agent/user-api@1111111111111111111111111111111111111111:src/app.py"
+    },
+    {
+      "content": "from functools import wraps\nfrom flask import request, abort\n\nTOKEN = \"secret\"\n\n\ndef require_token(fn):\n    @wraps(fn)\n    def wrapper(*args, **kwargs):\n        if request.headers.get(\"Authorization\") != \"Bearer \" + TOKEN:\n            abort(401)\n        return fn(*args, **kwargs)\n    return wrapper\n",
+      "content_hash": "c1d3a16818ef1068450efbeb24731b6e07b6f8720062fddb92b6b713cbf23f95",
+      "item_id": "E2",
+      "kind": "github_file",
+      "length": 300,
+      "mutable": 0,
+      "source": "github:acme-agent/user-api@1111111111111111111111111111111111111111:src/auth.py"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "challenges": [
+    {
+      "challenge_hash": "a62e96ca45f1998adeecc3c93c029f1d8d92a29452d95bac40fb67d838155616",
+      "challenge_id": "CH-1",
+      "challenger": "0x00000000000000000000000000000000000000b1",
+      "claim": "The handler may not return 201 on success.",
+      "created_at": 1800000060,
+      "evidence_id": "E1",
+      "original_status": "PASS",
+      "quote": "return jsonify(user), 201",
+      "reasoning": "The buyer asks the auditor to re-examine the status code of the create handler against the frozen source.",
+      "requirement_id": "REQ-002",
+      "resolution": {
+        "detail": "",
+        "new_verdict": "",
+        "quotes": [],
+        "reason": "scripted",
+        "ruling": "REJECTED"
+      },
+      "resolved_status": "PASS",
+      "side": "BUYER",
+      "status": "REJECTED"
+    }
+  ],
+  "evidence": [
+    {
+      "content": "from flask import Flask, request, jsonify\nfrom auth import require_token\nfrom flask_limiter import Limiter\n\napp = Flask(__name__)\nlimiter = Limiter(app, default_limits=[\"60 per minute\"])\nUSERS = {}\n\n\n@app.route(\"/users\", methods=[\"POST\"])\n@require_token\ndef create_user():\n    data = request.get_json()\n    user = {\"id\": len(USERS) + 1, \"name\": data[\"name\"], \"email\": data[\"email\"]}\n    USERS[user[\"id\"]] = user\n    return jsonify(user), 201\n\n\n@app.route(\"/users/<int:user_id>\", methods=[\"GET\"])\n@require_token\ndef get_user(user_id):\n    user = USERS.get(user_id)\n    if user is None:\n        return jsonify({\"error\": \"not found\"}), 404\n    return jsonify(user), 200\n",
+      "content_hash": "7968aee6976a05cb1a2adf98a78ff7d4881b7d9d0c1db5327a4d05884a3897eb",
+      "item_id": "E1",
+      "kind": "github_file",
+      "length": 667,
+      "mutable": 0,
+      "source": "github:acme-agent/user-api@2222222222222222222222222222222222222222:src/app.py"
+    },
+    {
+      "content": "from functools import wraps\nfrom flask import request, abort\n\nTOKEN = \"secret\"\n\n\ndef require_token(fn):\n    @wraps(fn)\n    def wrapper(*args, **kwargs):\n        if request.headers.get(\"Authorization\") != \"Bearer \" + TOKEN:\n            abort(401)\n        return fn(*args, **kwargs)\n    return wrapper\n",
+      "content_hash": "c1d3a16818ef1068450efbeb24731b6e07b6f8720062fddb92b6b713cbf23f95",
+      "item_id": "E2",
+      "kind": "github_file",
+      "length": 300,
+      "mutable": 0,
+      "source": "github:acme-agent/user-api@2222222222222222222222222222222222222222:src/auth.py"
+    },
+    {
+      "content": "{\"User\": {\"id\": \"integer\", \"name\": \"string\", \"email\": \"string\"}}\n",
+      "content_hash": "7afa1c735a31944c06693693217af715e3a5a45536442546d2af435b407f2bbe",
+      "item_id": "E3",
+      "kind": "github_file",
+      "length": 65,
+      "mutable": 0,
+      "source": "github:acme-agent/user-api@2222222222222222222222222222222222222222:docs/schema.json"
+    }
+  ]
+}
