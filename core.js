@@ -223,6 +223,16 @@
     AT.state.account = String(addr || "").toLowerCase();
     live.write = AT.state.account ? live.mod.createClient({ chain: live.chains[CFG.chain || "studionet"], account: addr }) : null;
   }
+  AT.restoreWallet = async function () {
+    try {
+      if (AT.state.mode !== "live" || !window.ethereum || AT.state.account) return AT.state.account;
+      var accounts = await window.ethereum.request({ method: "eth_accounts" });
+      if (!accounts || !accounts.length) return "";
+      await liveModules();
+      bindAccount(accounts[0]);
+      return AT.state.account;
+    } catch (e) { return ""; }
+  };
   AT.connectWallet = async function () {
     if (!window.ethereum) throw new Error("No injected wallet was found in this browser.");
     if (AT.state.mode !== "live") throw new Error("Switch to Live mode in Settings before connecting a wallet.");
