@@ -79,8 +79,16 @@
         counts.UNVERIFIED ? ui.badge(counts.UNVERIFIED + " unverified", "muted") : null] : null));
   }
   async function loadCards(ids) {
-    var snaps = await Promise.all(ids.map(function (id) { return AT.snapshot(id).catch(function () { return null; }); }));
-    return snaps.filter(Boolean);
+    var snaps = [], failed = [];
+    for (var i = 0; i < ids.length; i++) {
+      var snap = null;
+      for (var tries = 0; tries < 3 && !snap; tries++) {
+        try { snap = await AT.snapshot(ids[i]); } catch (e) { snap = null; await new Promise(function (r) { setTimeout(r, 400 * (tries + 1)); }); }
+      }
+      if (snap) snaps.push(snap); else failed.push(ids[i]);
+    }
+    snaps.failed = failed;
+    return snaps;
   }
   P.browse = async function () {
     var ids = await AT.source().list();
@@ -95,6 +103,7 @@
         var text = (s.agreement.title + " " + s.agreement.agreement_id + " " + s.agreement.buyer + " " + s.agreement.worker).toLowerCase();
         return okF && (!q || text.indexOf(q) !== -1);
       });
+      if (snaps.failed && snaps.failed.length) listBox.appendChild(el("p", { class: "bad small" }, "Could not read " + snaps.failed.join(", ") + " from the network. Reload the page to try again."));
       if (!shown.length) listBox.appendChild(el("p", { class: "muted" }, ids.length ? "No agreement matches this filter." : "No agreements yet. Create the first one."));
       shown.forEach(function (s) { listBox.appendChild(card(s)); });
     }
