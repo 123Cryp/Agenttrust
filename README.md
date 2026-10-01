@@ -4,7 +4,7 @@
 
 An agent (or a person) says "I will deliver X". A buyer locks money. Both sides agree on measurable requirements. The worker submits evidence, the evidence is frozen, validators judge each requirement against the frozen evidence and must quote it, an adversarial pass and an auditor can overturn weak passes, and a staked jury can decide disputes. The result is a canonical certificate anyone can re-verify offline.
 
-> AgentTrust checks that a **protocol was followed on frozen evidence**. It does not prove that a deliverable is correct, secure or fit for purpose, and it has **not been audited**. One manual run on GenLayer Studio is documented in [`docs/LIVE_TEST_REPORT.md`](docs/LIVE_TEST_REPORT.md). Read [Limits and non-guarantees](#limits-and-non-guarantees) before using it with anything of value.
+> AgentTrust checks that a **protocol was followed on frozen evidence**. It does not prove that a deliverable is correct, secure or fit for purpose, and it has **not been audited**. A manual campaign on GenLayer Studio (five agreements) is documented in [`docs/LIVE_TEST_REPORT.md`](docs/LIVE_TEST_REPORT.md). Read [Limits and non-guarantees](#limits-and-non-guarantees) before using it with anything of value.
 
 ```mermaid
 flowchart TD
@@ -163,9 +163,9 @@ Jurors come from a single staked pool. A dispute can only draw jurors registered
 * **Models can be wrong.** Quotes must exist verbatim, but a quote can be misread. A colluding validator majority defeats consensus. Three drawn jurors can be bribed, and whoever owns a large share of the juror pool is drawn more often.
 * **Only frozen evidence counts.** Private repositories, running services and anything not in the evidence cannot be judged. URL evidence is mutable at the source and is flagged as such.
 * **Not audited, not formally verified.** Tests are extensive (see `docs/SECURITY.md`) but run against a stub SDK, not GenVM.
-* **Run live once, on Studio only.** One run (simple path and a full jury dispute, `text` evidence only) deployed, reached consensus and paid out correctly; see `docs/LIVE_TEST_REPORT.md`. Not yet exercised live: refunds, a buyer-side jury result, non-revealing jurors, challenges, the red team, `github_*` and `url` evidence. Use small amounts.
+* **Run live on Studio only.** Five agreements (simple path, refund, rejected challenge, a three-juror dispute for the worker, a buyer-side jury result with a non-revealing juror) deployed, reached consensus and paid out correctly; see `docs/LIVE_TEST_REPORT.md`. The test contract is `0x9d04ea1E3C0BBA11c85e7325C87D2E009AcF3ccc` (a test build: one-minute windows, 1 GEN stakes). Not yet exercised live: an upheld challenge, the red team, deadlock, `github_*` and `url` evidence. Use small amounts.
 * **No emergency stop.** The owner can only withdraw the treasury.
-* **Frontend live mode is untested against a network** (the offline demo mode and all pages are browser-tested). The `deploy.mjs` script is untested.
+* **Frontend live mode** was checked read-only against the Studio test contract (all five agreements, the dispute page and the certificate hashes load). Sending transactions from a wallet in the browser is still untested. The `deploy.mjs` script is untested.
 * The certificate is not a signature. Authenticity comes from comparing its hash with the one the contract recorded.
 
 ## Final self-review
