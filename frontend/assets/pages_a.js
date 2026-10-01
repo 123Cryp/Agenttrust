@@ -132,7 +132,9 @@
     } else if (!AT.state.account) {
       wrap.appendChild(ui.panel(el("p", {}, "Connect a wallet to list the agreements you are a party to."),
         el("button", { class: "btn primary", type: "button", onclick: async function (e) {
-          try { await AT.connectWallet(); AT.refreshHeader(); AT.route(); } catch (err) { e.currentTarget.nextSibling.textContent = err.message || String(err); }
+          var btn = e.currentTarget, note = btn.nextSibling;
+          note.textContent = "Connecting…";
+          try { await AT.connectWallet(); AT.refreshHeader(); AT.route(); } catch (err) { note.textContent = (err && err.message) || String(err); }
         } }, "Connect wallet"), el("span", { class: "bad small" })));
       return wrap;
     }

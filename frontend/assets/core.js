@@ -158,10 +158,30 @@
     live.client = live.mod.createClient({ chain: live.chains[CFG.chain || "studionet"] });
     return live.client;
   }
+  var readQueue = { active: 0, waiting: [] };
+  function acquireRead() {
+    if (readQueue.active < 2) { readQueue.active++; return Promise.resolve(); }
+    return new Promise(function (resolve) { readQueue.waiting.push(resolve); });
+  }
+  function releaseRead() {
+    var next = readQueue.waiting.shift();
+    if (next) next(); else readQueue.active--;
+  }
   async function read(method, args) {
     if (!/^0x[0-9a-fA-F]{40}$/.test(AT.state.address)) throw new Error("Set the deployed AgentTrust contract address in Settings first.");
-    var c = await liveClient();
-    return AT.toPlain(await c.readContract({ address: AT.state.address, functionName: method, args: args || [] }));
+    var c = await liveClient(), lastError;
+    await acquireRead();
+    try {
+      for (var attempt = 0; attempt < 5; attempt++) {
+        try {
+          return AT.toPlain(await c.readContract({ address: AT.state.address, functionName: method, args: args || [] }));
+        } catch (e) {
+          lastError = e;
+          await new Promise(function (r) { setTimeout(r, 500 * (attempt + 1)); });
+        }
+      }
+      throw lastError;
+    } finally { releaseRead(); }
   }
   var liveSource = {
     id: "live", canWrite: true,
@@ -203,6 +223,16 @@
     AT.state.account = String(addr || "").toLowerCase();
     live.write = AT.state.account ? live.mod.createClient({ chain: live.chains[CFG.chain || "studionet"], account: addr }) : null;
   }
+  AT.restoreWallet = async function () {
+    try {
+      if (AT.state.mode !== "live" || !window.ethereum || AT.state.account) return AT.state.account;
+      var accounts = await window.ethereum.request({ method: "eth_accounts" });
+      if (!accounts || !accounts.length) return "";
+      await liveModules();
+      bindAccount(accounts[0]);
+      return AT.state.account;
+    } catch (e) { return ""; }
+  };
   AT.connectWallet = async function () {
     if (!window.ethereum) throw new Error("No injected wallet was found in this browser.");
     if (AT.state.mode !== "live") throw new Error("Switch to Live mode in Settings before connecting a wallet.");

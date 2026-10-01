@@ -61,7 +61,7 @@
   function settings() {
     var box = document.getElementById("settings");
     AT.clear(box);
-    var mode = el("select", { "aria-label": "Mode", onchange: function (e) { AT.setMode(e.target.value); AT.refreshHeader(); AT.route(); } },
+    var mode = el("select", { "aria-label": "Mode", onchange: function (e) { AT.setMode(e.target.value); AT.refreshHeader(); AT.route(); AT.restoreWallet().then(function (acc) { if (acc) { AT.refreshHeader(); AT.route(); } }); } },
       el("option", { value: "demo", selected: AT.state.mode === "demo" }, "Recorded demo (offline, read-only)"), el("option", { value: "live", selected: AT.state.mode === "live" }, "Live (deployed contract)"));
     var addr = el("input", { class: "mono", placeholder: "0x… deployed AgentTrust contract", value: AT.state.address, spellcheck: "false", "aria-label": "Contract address" });
     var msg = el("span", { class: "small", role: "status" });
@@ -93,6 +93,7 @@
     AT.refreshHeader();
     window.addEventListener("hashchange", AT.route);
     AT.route();
+    AT.restoreWallet().then(function (acc) { if (acc) { AT.refreshHeader(); AT.route(); } });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 })(window.AT);
