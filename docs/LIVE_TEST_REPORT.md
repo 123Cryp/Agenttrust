@@ -45,6 +45,8 @@ The certificate hash (`8fa2c46f…d442`) equals the hash recorded by the contrac
 | non-revealing juror (`get_juror`) | `stake` 0, `removed_at` set, `open_seats` 0: stake forfeited and juror removed from the pool |
 | `withdraw` by the buyer and both revealing jurors | all `SUCCESS`; contract balance fell from 5 GEN to 2 GEN, the two revealing jurors' stakes that stay in the pool |
 
+**Frontend, live mode (read-only).** The hosted frontend, set to Live with the contract address, listed all five agreements and opened `AT-2` with its terms, frozen evidence, escrow and hashes; the certificate hash shown (`8fa2c46f…d442`) matches the one verified offline. Reads from the browser sometimes failed with `Failed to fetch` when many requests ran at once, so the frontend now reads one or two at a time and retries.
+
 ## What this confirms
 
 * The contract loads and deploys under GenVM at about 92 KB.
@@ -67,4 +69,4 @@ The certificate hash (`8fa2c46f…d442`) equals the hash recorded by the contrac
 * An upheld challenge, the red team, and `ADVERSARIAL` verification (a rejected challenge was exercised in `AT-4`).
 * `github_file`, `github_diff`, `github_pr`, `url` and `artifact_hash` evidence; only `text` evidence was used.
 * More than one evidence item, and the freeze-window expiry paths.
-* Disagreement between validators, and the frontend in live mode.
+* Disagreement between validators, and sending transactions from the frontend with a wallet.
